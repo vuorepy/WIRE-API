@@ -28,6 +28,11 @@ public class ContentGenerationController : ControllerBase
             return BadRequest("Content generation failed.");
         }
 
-        return Ok(content);
+        GetGenerateText getGenerateText = new GetGenerateText
+        {
+            Content = content
+        };
+
+        return Ok(getGenerateText);
     }
 }
