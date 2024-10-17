@@ -1,0 +1,44 @@
+name: .NET
+
+on:
+  push:
+    branches: [ "development" ]
+  pull_request:
+    branches: [ "development" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Start Azure Cosmos DB emulator
+      run: |
+        docker run --publish ${{ vars.AZURE_COSMOS_PORT }}:${{ vars.AZURE_COSMOS_PORT }} \
+        --publish 10251:10251 \
+        --name cosmosdb-emulator \
+        --detach \
+        -e AZURE_COSMOS_EMULATOR_PARTITION_COUNT=5 \
+        -e AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE=false \
+        -e AZURE_COSMOS_EMULATOR_IP_ADDRESS_OVERRIDE=${{ vars.AZURE_COSMOS_EMULATOR_IP_ADDRESS_OVERRIDE }} \
+        mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
+        
+        sleep 5
+    - name: Test
+      env:
+        CosmosDBSettings__Account: "https://localhost:${{ vars.AZURE_COSMOS_PORT }}"
+        CosmosDBSettings__Key: "${{ vars.AZURE_COSMOS_KEY }}"
+        AzureOpenAISettings__Endpoint: "${{ secrets.AZURE_OPENAI_ENDPOINT }}"
+        AzureOpenAISettings__Key: "${{ secrets.AZURE_OPENAI_KEY }}"
+        AzureOpenAISettings_DeploymentName: "${{ vars.AZURE_OPENAI_DEPLOYMENTNAME }}"
+      run: dotnet test --no-build --verbosity normal
+      
