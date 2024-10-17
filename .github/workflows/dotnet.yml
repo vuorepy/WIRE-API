@@ -32,11 +32,11 @@ jobs:
         -e AZURE_COSMOS_EMULATOR_IP_ADDRESS_OVERRIDE=${{ vars.AZURE_COSMOS_EMULATOR_IP_ADDRESS_OVERRIDE }} \
         mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
         
-        sleep 5
+        sleep 10
     - name: Test
       env:
         CosmosDBSettings__Account: "https://localhost:${{ vars.AZURE_COSMOS_PORT }}"
-        CosmosDBSettings__Key: "${{ vars.AZURE_COSMOS_KEY }}"
+        CosmosDBSettings__Key: "${{ secrets.AZURE_COSMOS_KEY }}"
         AzureOpenAISettings__Endpoint: "${{ secrets.AZURE_OPENAI_ENDPOINT }}"
         AzureOpenAISettings__Key: "${{ secrets.AZURE_OPENAI_KEY }}"
         AzureOpenAISettings_DeploymentName: "${{ vars.AZURE_OPENAI_DEPLOYMENTNAME }}"
