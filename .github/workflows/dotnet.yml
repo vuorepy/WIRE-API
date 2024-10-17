@@ -39,6 +39,6 @@ jobs:
         CosmosDBSettings__Key: "${{ secrets.AZURE_COSMOS_KEY }}"
         AzureOpenAISettings__Endpoint: "${{ secrets.AZURE_OPENAI_ENDPOINT }}"
         AzureOpenAISettings__Key: "${{ secrets.AZURE_OPENAI_KEY }}"
-        AzureOpenAISettings_DeploymentName: "${{ vars.AZURE_OPENAI_DEPLOYMENTNAME }}"
+        AzureOpenAISettings__DeploymentName: "${{ vars.AZURE_OPENAI_DEPLOYMENTNAME }}"
       run: dotnet test --no-build --verbosity normal
       
