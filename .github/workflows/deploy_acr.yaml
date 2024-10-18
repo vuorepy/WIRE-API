@@ -27,7 +27,7 @@ jobs:
 
     - name: Build and push Docker image
       run: |
-        docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/wire-api:latest .
+        docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/wire-api:latest . -f Wire-API/Dockerfile 
         docker push ${{ secrets.ACR_LOGIN_SERVER }}/wire-api:latest
 
     - name: Log out from Azure Container Registry
