@@ -121,3 +121,5 @@ src/.vs/config/applicationhost.config
 .DS_Store
 
 .vscode/
+
+docker-compose.yml
