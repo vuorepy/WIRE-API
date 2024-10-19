@@ -8,7 +8,8 @@ namespace Wire.Services
     public interface IDocumentService
     {
         public Task<Document> GetDocumentAsync(string id);
-        public Task<List<Document>> GetAllDocumentsAsync();
+        public Task<List<Document>> GetAllDocumentsAsync();        
+        public Task<List<Document>> GetDocumentsByProjectIdAsync(string projectId);
         public Task<Document> CreateDocumentAsync(Document document);
         public Task<Document> UpdateDocumentAsync(string id, Document document);
         public Task<bool> RemoveDocumentAsync(string id);
@@ -97,6 +98,20 @@ namespace Wire.Services
             }
 
             return document;
+        }
+
+        public async Task<List<Document>> GetDocumentsByProjectIdAsync(string projectId)
+        {
+            var query = _container.GetItemLinqQueryable<Document>().Where(d => d.ProjectId == Guid.Parse(projectId)).ToFeedIterator();
+            var documents = new List<Document>();
+
+            while (query.HasMoreResults)
+            {
+                var response = await query.ReadNextAsync();
+                documents.AddRange(response);
+            }
+
+            return documents;
         }
     }
 }

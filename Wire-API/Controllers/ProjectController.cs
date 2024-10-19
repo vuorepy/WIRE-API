@@ -7,17 +7,20 @@ using Wire.Services;
 namespace Wire.Controllers;
 
 using AutoMapper;
+using Wire.DTO.Document;
 using Wire.DTO.Project;
 
 [ApiController]
 public class ProjectController : ControllerBase
 {
     private readonly IProjectService _projectService;
+    private readonly IDocumentService _documentService;
     private readonly IMapper _mapper;
 
-    public ProjectController(IProjectService projectService, IMapper mapper)
+    public ProjectController(IProjectService projectService, IDocumentService documentService, IMapper mapper)
     {
         _projectService = projectService;
+        _documentService = documentService;
         _mapper = mapper;
     }
 
@@ -95,6 +98,21 @@ public class ProjectController : ControllerBase
         }
 
         return NoContent();
+    }
+
+    [HttpGet]
+    [Route(ApiRoutes.Project.GetProjectDocuments)]
+    public async Task<IActionResult> GetProjectDocuments(string projectId)
+    {
+        var documents = await _documentService.GetDocumentsByProjectIdAsync(projectId);
+
+        if (documents == null)
+        {
+            return NotFound();
+        }
+
+        var documentDtos = _mapper.Map<IEnumerable<GetDocumentDto>>(documents);
+        return Ok(documentDtos);
     }
 }
 

@@ -10,8 +10,8 @@ public static class ApiRoutes
         public const string GetProject = Base + "/project/{id}";
         public const string CreateProject = Base + "/project";
         public const string UpdateProject = Base + "/project/{id}";
-        public const string DeleteProject = Base + "/project/{id}";
-
+        public const string DeleteProject = Base + "/project/{id}";        
+        public const string GetProjectDocuments = Base + "/project/{projectId}/documents";
     }
 
     public static class Document
