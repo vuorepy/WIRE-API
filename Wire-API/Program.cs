@@ -1,10 +1,11 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Identity.Web;
 using Wire.Services;
 using Wire.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// CosmodDB Settings
 builder.Services.AddSingleton(serviceProvider =>
 {
     var configuration = serviceProvider.GetRequiredService<IConfiguration>();
@@ -18,6 +19,17 @@ builder.Services.AddSingleton(serviceProvider =>
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IDocumentService, DocumentService>();
 builder.Services.AddScoped<IContentGenerationService, ContentGenerationService>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApi(options =>
+    {
+        builder.Configuration.Bind("AzureAdB2C", options);
+        options.TokenValidationParameters.NameClaimType = "name";
+    }, 
+    options => 
+    { 
+        builder.Configuration.Bind("AzureAdB2C", options); 
+    });
 
 // CORS
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -45,10 +57,12 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-
 // Middleware
 app.UseCors(MyAllowSpecificOrigins);
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Routes
 app.MapControllers();

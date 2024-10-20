@@ -21,7 +21,7 @@ public class ContentGenerationController : ControllerBase
     [Route(ApiRoutes.ContentGeneration.GenerateText)]
     public async Task<IActionResult> GenerateText([FromBody] GenerateContentDto generateContentDto)
     {
-        var content = await _contentGenerationService.GenerateText(generateContentDto.Prompt);
+        var content = await _contentGenerationService.GenerateText(generateContentDto.Prompt, generateContentDto.Context);
 
         if (content == null)
         {

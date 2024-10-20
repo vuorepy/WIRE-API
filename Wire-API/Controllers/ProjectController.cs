@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using Wire.Models;
 using Wire.Routes;
 using Wire.Services;
-
-namespace Wire.Controllers;
-
 using AutoMapper;
 using Wire.DTO.Document;
 using Wire.DTO.Project;
+using Microsoft.AspNetCore.Authorization;
+
+namespace Wire.Controllers;
 
 [ApiController]
 public class ProjectController : ControllerBase
