@@ -189,4 +189,43 @@ public class ProjectControllerTests : IClassFixture<WireApiWebApplicationFactory
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
+
+    [Fact]
+    public async Task GetProjectDocuments_ValidProjectId_ReturnsDocuments()
+    {
+        // Arrange
+        var project = await _databaseHelper.AddProjectToDatabase();
+        var document1 = await _databaseHelper.AddDocumentToDatabase(project.Id);
+        var document2 = await _databaseHelper.AddDocumentToDatabase(project.Id);
+
+        // Act
+        var response = await _client.GetAsync(ApiRoutes.Project.GetProjectDocuments.Replace("{projectId}", project.Id.ToString()));
+        response.EnsureSuccessStatusCode();
+        var documents = await response.Content.ReadFromJsonAsync<IEnumerable<Document>>();
+
+        // Assert
+        documents.Should().NotBeEmpty();
+        documents.Should().HaveCount(2);
+        documents.Should().ContainEquivalentOf(document1);        
+        documents.Should().ContainEquivalentOf(document2);
+    }  
+
+        [Fact]
+    public async Task GetProjectDocuments_NonExistentProjectId_ReturnEmptyList()
+    {
+        // Arrange
+        var project1 = await _databaseHelper.AddProjectToDatabase();
+        var document1 = await _databaseHelper.AddDocumentToDatabase(project1.Id);
+        var document2 = await _databaseHelper.AddDocumentToDatabase(project1.Id);
+        string wrongId = Guid.NewGuid().ToString();
+
+        // Act
+        var response = await _client.GetAsync(ApiRoutes.Project.GetProjectDocuments.Replace("{projectId}", wrongId));
+        response.EnsureSuccessStatusCode();
+        var documents = await response.Content.ReadFromJsonAsync<IEnumerable<Document>>();
+
+        // Assert
+        documents.Should().BeEmpty();
+        documents.Should().HaveCount(0);
+    }  
 }

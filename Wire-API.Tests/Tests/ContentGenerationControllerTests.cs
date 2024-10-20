@@ -21,7 +21,7 @@ public class ContentGenerationControllerTests : IClassFixture<WireApiWebApplicat
     public async Task GenerateText_ValidProjectId_ReturnsAllDocuments()
     {
         // Arrange
-        var generateContentDto = new GenerateContentDto() { Prompt = "Tell me a joke" };
+        var generateContentDto = new GenerateContentDto() { Prompt = "Tell me a joke", Context = "Old jokes were lame"};
         var json = JsonConvert.SerializeObject(generateContentDto);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
